@@ -3,6 +3,7 @@ import path from "path";
 import { createServer as createViteServer } from "vite";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import dotenv from "dotenv";
+import { sendContactEmail } from "./server/mail";
 
 dotenv.config();
 
@@ -14,6 +15,35 @@ async function startServer() {
 
   // Gemini Setup
   const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
+
+  app.post("/api/contact", async (req, res) => {
+    try {
+      const name = String(req.body?.name ?? "").trim();
+      const email = String(req.body?.email ?? "").trim();
+      const message = String(req.body?.message ?? "").trim();
+
+      if (!name || !email || !message) {
+        return res.status(400).json({ error: "Name, email, and message are required." });
+      }
+
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailPattern.test(email)) {
+        return res.status(400).json({ error: "Please enter a valid email address." });
+      }
+
+      if (message.length > 5000) {
+        return res.status(400).json({ error: "Message is too long." });
+      }
+
+      await sendContactEmail({ name, email, message });
+      return res.json({ success: true });
+    } catch (error) {
+      console.error("Contact form error:", error);
+      return res.status(500).json({
+        error: "Unable to send your message right now. Please try again or email directly.",
+      });
+    }
+  });
 
   app.post("/api/audit", async (req, res) => {
     try {

@@ -1,7 +1,9 @@
 import { motion } from "motion/react";
+import { useState } from "react";
 import {
   Instagram,
   Linkedin,
+  Loader2,
   Mail,
   MapPin,
   MessageCircle,
@@ -14,7 +16,45 @@ const phoneDisplay = "03472655236";
 const phoneTel = "+923472655236";
 const waNumber = "923472655236";
 
+type FormStatus = "idle" | "loading" | "success" | "error";
+
 export default function Contact() {
+  const [name, setName] = useState("");
+  const [fromEmail, setFromEmail] = useState("");
+  const [message, setMessage] = useState("");
+  const [status, setStatus] = useState<FormStatus>("idle");
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setStatus("loading");
+    setErrorMessage("");
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email: fromEmail, message }),
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to send message.");
+      }
+
+      setStatus("success");
+      setName("");
+      setFromEmail("");
+      setMessage("");
+    } catch (err) {
+      setStatus("error");
+      setErrorMessage(
+        err instanceof Error ? err.message : "Something went wrong. Please try again."
+      );
+    }
+  };
+
   return (
     <section id="contact" className="section-padding relative overflow-hidden">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(16,185,129,0.12),transparent_45%),radial-gradient(circle_at_80%_0%,rgba(6,182,212,0.1),transparent_40%)] dark:bg-[radial-gradient(circle_at_20%_20%,rgba(204,255,0,0.08),transparent_45%)]" />
@@ -117,24 +157,40 @@ export default function Contact() {
           viewport={{ once: true }}
           className="glass-card p-8 md:p-10"
         >
-          <form className="space-y-8" onSubmit={(e) => e.preventDefault()}>
+          <form className="space-y-8" onSubmit={handleSubmit}>
             <div className="grid gap-8 md:grid-cols-2">
               <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-widest text-slate-500">
+                <label
+                  htmlFor="contact-name"
+                  className="text-xs font-bold uppercase tracking-widest text-slate-500"
+                >
                   Name
                 </label>
                 <input
+                  id="contact-name"
                   type="text"
+                  name="name"
+                  required
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
                   placeholder="Your name"
                   className="w-full border-0 border-b border-slate-200 bg-transparent py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 dark:border-white/10 dark:text-white dark:focus:border-[#CCFF00]"
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-widest text-slate-500">
+                <label
+                  htmlFor="contact-email"
+                  className="text-xs font-bold uppercase tracking-widest text-slate-500"
+                >
                   Email
                 </label>
                 <input
+                  id="contact-email"
                   type="email"
+                  name="email"
+                  required
+                  value={fromEmail}
+                  onChange={(e) => setFromEmail(e.target.value)}
                   placeholder="you@company.com"
                   className="w-full border-0 border-b border-slate-200 bg-transparent py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 dark:border-white/10 dark:text-white dark:focus:border-[#CCFF00]"
                 />
@@ -142,22 +198,52 @@ export default function Contact() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-bold uppercase tracking-widest text-slate-500">
+              <label
+                htmlFor="contact-message"
+                className="text-xs font-bold uppercase tracking-widest text-slate-500"
+              >
                 Message
               </label>
               <textarea
+                id="contact-message"
+                name="message"
+                required
                 rows={4}
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
                 placeholder="Tell me about your business, goals, and timelines..."
                 className="w-full resize-none border-0 border-b border-slate-200 bg-transparent py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 dark:border-white/10 dark:text-white dark:focus:border-[#CCFF00]"
               />
             </div>
 
+            {status === "success" && (
+              <p className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm font-medium text-emerald-800 dark:text-emerald-300">
+                Message sent successfully. I&apos;ll get back to you soon.
+              </p>
+            )}
+
+            {status === "error" && (
+              <p className="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm font-medium text-red-700 dark:text-red-300">
+                {errorMessage}
+              </p>
+            )}
+
             <button
               type="submit"
-              className="btn-primary flex w-full items-center justify-center gap-2 py-4 text-base group"
+              disabled={status === "loading"}
+              className="btn-primary flex w-full items-center justify-center gap-2 py-4 text-base group disabled:cursor-not-allowed disabled:opacity-60"
             >
-              Submit now
-              <Send className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+              {status === "loading" ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Sending...
+                </>
+              ) : (
+                <>
+                  Submit now
+                  <Send className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                </>
+              )}
             </button>
           </form>
 

@@ -1,56 +1,96 @@
 import { motion } from "motion/react";
-import { ArrowUpRight, LineChart, MousePointerClick, Share2 } from "lucide-react";
+import { Facebook, Search } from "lucide-react";
 
-const studies = [
+type CaseStudy = {
+  title: string;
+  client: string;
+  platform: "Meta Ads" | "Google Ads";
+  image: string;
+  metrics: { label: string; value: string }[];
+  blurb: string;
+};
+
+const studies: CaseStudy[] = [
   {
-    title: "Ecommerce ROAS lift",
-    client: "Retail · Meta + Google",
-    metric: "+42%",
-    metricLabel: "ROAS vs baseline",
-    blurb: "Restructured catalog campaigns, tightened audience exclusions, and introduced a creative testing cadence.",
-    icon: LineChart,
-    bars: [42, 58, 63, 71, 88, 94],
+    title: "Arabian Grill Night — messaging leads",
+    client: "Restaurant · Meta Ads",
+    platform: "Meta Ads",
+    image: "/Arabian Grill Night Leads.PNG",
+    metrics: [
+      { label: "Conversations started", value: "8,428" },
+      { label: "Cost per result", value: "$0.07" },
+      { label: "Amount spent", value: "$599.93" },
+    ],
+    blurb:
+      "Click-to-message campaign driving high-volume WhatsApp/Messenger conversations at 68% below the median cost of similar ad sets.",
   },
   {
-    title: "Lead volume acceleration",
-    client: "B2B services",
-    metric: "+185%",
-    metricLabel: "qualified leads (90 days)",
-    blurb: "Search intent clusters, dedicated landing variants, and CRM-ready conversion tracking.",
-    icon: MousePointerClick,
-    bars: [30, 44, 52, 68, 79, 92],
+    title: "Ceres UK — brand recall lift",
+    client: "Ceres UK · Meta Ads",
+    platform: "Meta Ads",
+    image: "/Ceres UK Meta campaign.png",
+    metrics: [
+      { label: "Est. ad recall lift", value: "5,670" },
+      { label: "Cost per result", value: "£0.03" },
+      { label: "Amount spent", value: "£168.51" },
+    ],
+    blurb:
+      "Awareness-focused Meta campaign delivering strong estimated ad recall at an exceptionally efficient cost per result.",
   },
   {
-    title: "Social engagement growth",
-    client: "Brand awareness",
-    metric: "+3.1×",
-    metricLabel: "avg. engagement rate",
-    blurb: "Hook-led creatives, comment moderation playbooks, and community growth experiments.",
-    icon: Share2,
-    bars: [35, 48, 55, 62, 74, 81],
+    title: "Lead form acquisition",
+    client: "B2B / services · Meta Ads",
+    platform: "Meta Ads",
+    image: "/xpcleads.png",
+    metrics: [
+      { label: "Leads (form)", value: "133" },
+      { label: "Cost per lead", value: "£9.17" },
+      { label: "Amount spent", value: "£1,219.61" },
+    ],
+    blurb:
+      "Sustained lead-gen performance with consistent daily form submissions and disciplined spend across the campaign window.",
   },
   {
-    title: "Google Ads efficiency",
-    client: "Local services",
-    metric: "−28%",
-    metricLabel: "cost per lead",
-    blurb: "Negative keyword mining, geo bid adjustments, and ad schedule optimization by intent windows.",
-    icon: ArrowUpRight,
-    bars: [55, 52, 48, 44, 38, 33],
+    title: "High-volume search traffic",
+    client: "Brand campaign · Google Ads",
+    platform: "Google Ads",
+    image: "/ncgoogle.png",
+    metrics: [
+      { label: "Clicks", value: "9.73K" },
+      { label: "Impressions", value: "355K" },
+      { label: "Avg. CPC", value: "£0.44" },
+    ],
+    blurb:
+      "Google Ads search campaign scaling clicks and impressions while maintaining a controlled average cost per click.",
+  },
+  {
+    title: "App install growth",
+    client: "Mobile app · Google Ads",
+    platform: "Google Ads",
+    image: "/ceresgoogle.png",
+    metrics: [
+      { label: "Clicks", value: "288K" },
+      { label: "Installs", value: "22.5K" },
+      { label: "Cost / install", value: "$0.05" },
+    ],
+    blurb:
+      "App promotion campaign combining massive click volume with ultra-low cost per install through ongoing bid and creative optimization.",
   },
 ];
 
-function MiniChart({ values }: { values: number[] }) {
+function PlatformBadge({ platform }: { platform: CaseStudy["platform"] }) {
+  const isMeta = platform === "Meta Ads";
   return (
-    <div className="mt-6 flex h-24 items-end gap-1.5">
-      {values.map((v, i) => (
-        <div
-          key={i}
-          className="flex-1 rounded-t-md bg-gradient-to-t from-emerald-600/20 to-emerald-500/80 dark:from-[#CCFF00]/15 dark:to-[#CCFF00]/90"
-          style={{ height: `${v}%` }}
-        />
-      ))}
-    </div>
+    <span
+      className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold ${
+        isMeta
+          ? "bg-blue-500/10 text-blue-700 dark:bg-blue-500/15 dark:text-blue-300"
+          : "bg-amber-500/10 text-amber-800 dark:bg-amber-500/15 dark:text-amber-300"
+      }`}
+    >
+      {isMeta ? <Facebook className="h-3 w-3" /> : <Search className="h-3 w-3" />}
+      {platform}
+    </span>
   );
 }
 
@@ -64,66 +104,74 @@ export default function Portfolio() {
               Portfolio / case studies
             </p>
             <h2 className="mt-4 font-display text-3xl font-bold text-slate-900 dark:text-white md:text-4xl">
-              Sample outcomes in an{" "}
-              <span className="text-gradient">analytics-first</span> style
+              Real campaigns,{" "}
+              <span className="text-gradient">real results</span>
             </h2>
             <p className="mt-4 text-lg text-slate-600 dark:text-slate-400">
-              Illustrative case study cards — structured the way I report to clients:
-              clear KPI, narrative, and trend visualization.
+              Live performance snapshots from Meta and Google Ads — the same
+              dashboards I use to report, optimize, and scale client accounts.
             </p>
           </div>
           <a href="#contact" className="btn-outline self-start md:self-auto">
-            Discuss a real engagement
+            Start your campaign
           </a>
         </div>
 
-        <div className="mt-14 grid gap-8 md:grid-cols-2">
-          {studies.map((c, i) => (
+        <div className="mt-14 grid gap-8 lg:grid-cols-2">
+          {studies.map((study, i) => (
             <motion.article
-              key={c.title}
+              key={study.title}
               initial={{ opacity: 0, y: 22 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.06 }}
-              className="group glass-card flex flex-col p-8 transition-transform duration-500 hover:-translate-y-1 md:p-10"
+              transition={{ delay: i * 0.05 }}
+              className={`group glass-card overflow-hidden transition duration-500 hover:-translate-y-1 ${
+                i === studies.length - 1 ? "lg:col-span-2 lg:mx-auto lg:max-w-3xl" : ""
+              }`}
             >
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-widest text-slate-500">
-                    {c.client}
-                  </p>
-                  <h3 className="mt-2 font-display text-xl font-bold text-slate-900 dark:text-white">
-                    {c.title}
-                  </h3>
+              <div className="border-b border-slate-200/80 bg-slate-50/50 p-6 dark:border-white/10 dark:bg-white/[0.03] md:p-8">
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-widest text-slate-500">
+                      {study.client}
+                    </p>
+                    <h3 className="mt-2 font-display text-xl font-bold text-slate-900 dark:text-white">
+                      {study.title}
+                    </h3>
+                  </div>
+                  <PlatformBadge platform={study.platform} />
                 </div>
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-slate-200 bg-white/80 text-emerald-600 dark:border-white/10 dark:bg-white/5 dark:text-[#CCFF00]">
-                  <c.icon className="h-5 w-5" />
+
+                <div className="mt-5 grid grid-cols-3 gap-3">
+                  {study.metrics.map((m) => (
+                    <div
+                      key={m.label}
+                      className="rounded-xl border border-slate-200/80 bg-white/70 px-3 py-3 dark:border-white/10 dark:bg-black/25"
+                    >
+                      <p className="text-[10px] font-semibold uppercase leading-tight tracking-wide text-slate-500 dark:text-slate-400">
+                        {m.label}
+                      </p>
+                      <p className="mt-1 font-display text-lg font-bold leading-none text-slate-900 dark:text-white md:text-xl">
+                        {m.value}
+                      </p>
+                    </div>
+                  ))}
                 </div>
+
+                <p className="mt-5 text-sm leading-relaxed text-slate-600 dark:text-slate-400">
+                  {study.blurb}
+                </p>
               </div>
 
-              <div className="mt-6 grid grid-cols-2 gap-4 rounded-2xl border border-slate-200/80 bg-slate-50/80 p-4 dark:border-white/10 dark:bg-black/30">
-                <div>
-                  <p className="text-xs font-medium uppercase tracking-wider text-slate-500">
-                    Primary KPI
-                  </p>
-                  <p className="mt-1 font-display text-3xl font-bold text-slate-900 dark:text-white">
-                    {c.metric}
-                  </p>
+              <div className="relative overflow-hidden bg-white p-3 dark:bg-slate-950/50 md:p-4">
+                <div className="overflow-hidden rounded-xl border border-slate-200/80 shadow-inner dark:border-white/10">
+                  <img
+                    src={encodeURI(study.image)}
+                    alt={`${study.title} — performance dashboard`}
+                    className="h-auto w-full object-cover object-top transition duration-500 group-hover:scale-[1.02]"
+                    loading="lazy"
+                  />
                 </div>
-                <div className="flex items-end justify-end text-right">
-                  <p className="text-xs text-slate-500 dark:text-slate-400">{c.metricLabel}</p>
-                </div>
-              </div>
-
-              <MiniChart values={c.bars} />
-
-              <p className="mt-5 text-sm leading-relaxed text-slate-600 dark:text-slate-400">
-                {c.blurb}
-              </p>
-
-              <div className="mt-6 flex items-center gap-2 text-sm font-semibold text-emerald-700 dark:text-[#CCFF00]">
-                View narrative
-                <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
               </div>
             </motion.article>
           ))}
